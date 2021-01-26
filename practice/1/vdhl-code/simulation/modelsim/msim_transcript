@@ -1,0 +1,48 @@
+# Reading pref.tcl
+# do display-7segmentos_run_msim_rtl_vhdl.do
+# if {[file exists rtl_work]} {
+# 	vdel -lib rtl_work -all
+# }
+# vlib rtl_work
+# vmap work rtl_work
+# Model Technology ModelSim - Intel FPGA Edition vmap 2020.1 Lib Mapping Utility 2020.02 Feb 28 2020
+# vmap work rtl_work 
+# Copying C:/intelFPGA_lite/20.1/modelsim_ase/win32aloem/../modelsim.ini to modelsim.ini
+# Modifying modelsim.ini
+# 
+# vcom -93 -work work {C:/studies/university/semestre 2020.2/digital-circuits/practice/1/vdhl-code/disp7seg.vhd}
+# Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 28 2020
+# Start time: 23:37:56 on Jan 24,2021
+# vcom -reportprogress 300 -93 -work work C:/studies/university/semestre 2020.2/digital-circuits/practice/1/vdhl-code/disp7seg.vhd 
+# -- Loading package STANDARD
+# -- Compiling entity disp7seg
+# -- Compiling architecture leds of disp7seg
+# End time: 23:37:56 on Jan 24,2021, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# 
+run wave.do
+# No Design Loaded!
+wave.do
+# couldn't execute ".\wave.do": no such file or directory
+.\wave.do
+# invalid command name ".wave.do"
+ls
+# display-7segmentos_run_msim_rtl_vhdl.do      
+# display-7segmentos_run_msim_rtl_vhdl.do.bak  
+# modelsim.ini                                 
+# msim_transcript                              
+# rtl_work                                     
+# vsim.wlf                                     
+# wave.do                                      
+# wave.do.bak                                  
+cd ./wave.do
+# couldn't change working directory to "./wave.do": not a directory
+vsim work.disp7seg
+# vsim work.disp7seg 
+# Start time: 23:49:02 on Jan 24,2021
+# Loading std.standard
+# Loading work.disp7seg(leds)
+run wave.do
+# Invalid time value: wave.do
+# End time: 23:51:20 on Jan 24,2021, Elapsed time: 0:02:18
+# Errors: 0, Warnings: 0

@@ -1,0 +1,48 @@
+m255
+K4
+z2
+!s11e vcom 2020.1 2020.02, Feb 28 2020
+13
+!s112 1.1
+!i10d 8192
+!i10e 25
+!i10f 100
+cModel Technology
+Z0 dC:/studies/university/semestre 2020.2/digital-circuits/practice/1/vdhl-code/simulation/modelsim
+Edisp7seg
+Z1 w1611540510
+!i122 0
+R0
+Z2 8C:/studies/university/semestre 2020.2/digital-circuits/practice/1/vdhl-code/disp7seg.vhd
+Z3 FC:/studies/university/semestre 2020.2/digital-circuits/practice/1/vdhl-code/disp7seg.vhd
+l0
+L1 1
+V<9JhkSD>TB`fo6ZQj0Kk]3
+!s100 =d1daiN]V]BOd;8R<nNCA1
+Z4 OV;C;2020.1;71
+31
+Z5 !s110 1611542276
+!i10b 1
+Z6 !s108 1611542276.000000
+Z7 !s90 -reportprogress|300|-93|-work|work|C:/studies/university/semestre 2020.2/digital-circuits/practice/1/vdhl-code/disp7seg.vhd|
+!s107 C:/studies/university/semestre 2020.2/digital-circuits/practice/1/vdhl-code/disp7seg.vhd|
+!i113 1
+Z8 o-93 -work work
+Z9 tExplicit 1 CvgOpt 0
+Aleds
+DEx4 work 8 disp7seg 0 22 <9JhkSD>TB`fo6ZQj0Kk]3
+!i122 0
+l8
+L6 30
+VJBo5>=T^2lf@bK7nj^a7@0
+!s100 BeHQP:[S;[4;8iV>lbdKT0
+R4
+31
+R5
+!i10b 1
+R6
+R7
+Z10 !s107 C:/studies/university/semestre 2020.2/digital-circuits/practice/1/vdhl-code/disp7seg.vhd|
+!i113 1
+R8
+R9
