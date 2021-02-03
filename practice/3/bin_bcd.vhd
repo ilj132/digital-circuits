@@ -29,4 +29,6 @@ O(6) <= ;
 end segmentos;
 
 
-
+entity bin_bcd is
+port(  );
+end bin_bcd;
