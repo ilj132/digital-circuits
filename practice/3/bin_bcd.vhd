@@ -1,10 +1,10 @@
-entity 7seg is 
+entity d7seg is 
 port( I: in bit_vector (0 to 4);
 O: out bit_vector (0 to 7) 
 );
-end 7seg;
+end d7seg;
 
-architecture segmentos of 7seg is
+architecture segmentos of d7seg is
 	signal A,B,C,D,NA,NB,NC,ND: bit;
 	
 begin
