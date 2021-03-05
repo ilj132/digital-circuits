@@ -43,6 +43,7 @@ begin
 
 end logic;
 
+
 --===============--
 -- BLOCO Bin-BCD --
 --===============--
@@ -74,6 +75,7 @@ begin
             or (A(2) and A(1));
 
 end logic;
+
 
 --=================================--
 -- DECODIFICADOR Bin-BCD (16 bits) --
@@ -313,6 +315,154 @@ begin
    Sa_menor_b <= V_Sa_menor_b(9);
  
 end logic_Comparador;
+
+
+--==============--
+-- MEIO SOMADOR --
+--==============--
+
+entity HALF_ADD is
+    port(A, B: in bit;
+            S, CO: out bit);
+end HALF_ADD;
+
+architecture logic of HALF_ADD is
+
+begin
+    S <= A xor B;
+    CO <= A and B;
+end logic;
+
+
+--==================--
+-- SOMADOR COMPLETO --
+--==================--
+
+entity COMP_ADD is
+    port(A, B, CI: in bit;
+            S, CO: out bit);
+end COMP_ADD;
+
+architecture logic of COMP_ADD is
+
+begin
+    S <= A xor B xor CI;
+    CO <= (B and CI) or (A and CI) or (A and B);
+end logic;
+
+
+--===================--
+-- SOMADOR (10 bits) --
+--===================--
+
+entity ADD10 is
+    port(A, B: in bit_vector(9 downto 0);
+            O: out bit_vector(9 downto 0);
+            CO: out bit);
+end ADD10;
+
+architecture logic of ADD10 is
+
+component HALF_ADD is
+    port(A, B: in bit;
+        S, CO: out bit);
+end component;
+
+component COMP_ADD
+    port(A, B, CI: in bit;
+            S, CO: out bit);
+end component;
+
+signal VAI_UM: bit_vector(8 downto 0);
+
+begin
+   S0: HALF_ADD port map(A(0), B(0), O(0), VAI_UM(0));
+   S1: COMP_ADD port map(A(1), B(1), VAI_UM(0), O(1), VAI_UM(1));
+   S2: COMP_ADD port map(A(2), B(2), VAI_UM(1), O(2), VAI_UM(2));
+   S3: COMP_ADD port map(A(3), B(3), VAI_UM(2), O(3), VAI_UM(3));
+   S4: COMP_ADD port map(A(4), B(4), VAI_UM(3), O(4), VAI_UM(4));
+   S5: COMP_ADD port map(A(5), B(5), VAI_UM(4), O(5), VAI_UM(5));
+   S6: COMP_ADD port map(A(6), B(6), VAI_UM(5), O(6), VAI_UM(6));
+   S7: COMP_ADD port map(A(7), B(7), VAI_UM(6), O(7), VAI_UM(7));
+	S8: COMP_ADD port map(A(8), B(8), VAI_UM(7), O(8), VAI_UM(8));
+	S9: COMP_ADD port map(A(9), B(9), VAI_UM(8), O(9), CO);
+	
+end logic;
+
+
+--=========================--
+-- MULTIPLICADOR (10 bits) --
+--=========================--
+
+entity MUL is
+    port(A: in bit_vector(9 downto 0);
+				B: in bit_vector(3 downto 0);
+            O: out bit_vector(9 downto 0);
+            CO: out bit);
+end MUL;
+
+architecture logic of MUL is
+
+component ADD10
+    port(A, B: in bit_vector(9 downto 0);
+            O: out bit_vector(9 downto 0);
+            CO: out bit);
+end component;
+
+signal PP1, PP2, PP3, PP4, S0, S1: bit_vector(9 downto 0);
+signal VAI_UM: bit_vector(1 downto 0);
+
+begin
+   PP1(0) <= B(0) and A(0);
+   PP1(1) <= B(0) and A(1);
+   PP1(2) <= B(0) and A(2);
+   PP1(3) <= B(0) and A(3);
+   PP1(4) <= B(0) and A(4);
+   PP1(5) <= B(0) and A(5);
+   PP1(6) <= B(0) and A(6);
+   PP1(7) <= B(0) and A(7);
+   PP1(8) <= B(0) and A(8);
+   PP1(9) <= B(0) and A(9);
+	
+   PP2(0) <= '0';
+	PP2(1) <= B(1) and A(0);
+   PP2(2) <= B(1) and A(1);
+   PP2(3) <= B(1) and A(2);
+   PP2(4) <= B(1) and A(3);
+   PP2(5) <= B(1) and A(4);
+   PP2(6) <= B(1) and A(5);
+   PP2(7) <= B(1) and A(6);
+   PP2(8) <= B(1) and A(7);
+   PP2(9) <= B(1) and A(8);
+   
+	PP3(0) <= '0';
+   PP3(1) <= '0';
+	PP3(2) <= B(2) and A(0);
+   PP3(3) <= B(2) and A(1);
+   PP3(4) <= B(2) and A(2);
+   PP3(5) <= B(2) and A(3);
+   PP3(6) <= B(2) and A(4);
+   PP3(7) <= B(2) and A(5);
+   PP3(8) <= B(2) and A(6);
+   PP3(9) <= B(2) and A(7);
+	
+	PP4(0) <= '0';
+	PP4(1) <= '0';
+	PP4(2) <= '0';
+   PP4(3) <= B(3) and A(0);
+   PP4(4) <= B(3) and A(1);
+   PP4(5) <= B(3) and A(2);
+   PP4(6) <= B(3) and A(3);
+   PP4(7) <= B(3) and A(4);
+   PP4(8) <= B(3) and A(5);
+   PP4(9) <= B(3) and A(6);
+	
+	
+   SOMA0: ADD10 port map(PP1, PP2, S0, VAI_UM(0));
+   SOMA1: ADD10 port map(S0, PP3, S1, VAI_UM(1));
+   SOMA2: ADD10 port map(S1, PP4, O, CO);
+	
+end logic;
 
 
 --==========--
