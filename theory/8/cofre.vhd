@@ -6,7 +6,7 @@
 
 entity D7SEG is
    port (I: in bit_vector (3 downto 0);	
-		O: out bit_vector (6 downto 0));	-- Vetor de saidas, com 7 posicoes, que representa os 7 segmentos do display que serão acesos 
+		O: out bit_vector (6 downto 0));
 end D7SEG;
 
 architecture logic of D7SEG is
