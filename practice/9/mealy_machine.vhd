@@ -40,8 +40,11 @@ ARCHITECTURE CKT OF LOGICA_COMB IS
 
 BEGIN
 
-	E1P <= (not E1 and not E0 and not y and not u) or (not E1 and E0 and y and not u) or (E1 and E0 and not y) or (E1 and not E0 and y) or (E1 and u) ;
-	E0P <= (not E0 and not u) or (E0 and u);			
+	E1P <= (not E1 and not E0 and not y and not u) or (not E1 and E0 and y and not u) or 
+			(E1 and E0 and not y) or (E1 and not E0 and y) or (E1 and u) ;
+			
+	E0P <= (not E0 and not u) or (E0 and u);
+	
 	z <= u;
 	
 END CKT;
