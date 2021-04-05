@@ -1,0 +1,701 @@
+-- AUTOR: ISAAC DE LYRA JUNIOR --
+
+--==============--
+-- MEIO SOMADOR --
+--==============--
+
+entity HALF_ADD is
+    port(A, B: in bit;
+            S, CO: out bit);
+end HALF_ADD;
+
+architecture CKT of HALF_ADD is
+
+begin
+
+    S <= A xor B;
+    CO <= A and B;
+
+end CKT;
+
+
+--==================--
+-- SOMADOR COMPLETO --
+--==================--
+
+entity COMP_ADD is
+    port(A, B, CI: in bit;
+            S, CO: out bit);
+end COMP_ADD;
+
+architecture CKT of COMP_ADD is
+
+begin
+
+    S <= A xor B xor CI;
+    CO <= (B and CI) or (A and CI) or (A and B);
+
+end CKT;
+
+
+--=================--
+-- SOMADOR 11 BITS --
+--=================--
+
+entity ADD11 is
+    port(A, B: in bit_vector(10 downto 0);
+            O: out bit_vector(10 downto 0);
+            CO: out bit);
+end ADD11;
+
+architecture CKT of ADD11 is
+
+component HALF_ADD is
+    port(A, B: in bit;
+        S, CO: out bit);
+end component;
+
+component COMP_ADD
+    port(A, B, CI: in bit;
+            S, CO: out bit);
+end component;
+
+signal VAI_UM: bit_vector(9 downto 0);
+
+begin
+
+    S0: HALF_ADD port map(A(0), B(0), O(0), VAI_UM(0));
+    S1: COMP_ADD port map(A(1), B(1), VAI_UM(0), O(1), VAI_UM(1));
+    S2: COMP_ADD port map(A(2), B(2), VAI_UM(1), O(2), VAI_UM(2));
+    S3: COMP_ADD port map(A(3), B(3), VAI_UM(2), O(3), VAI_UM(3));
+    S4: COMP_ADD port map(A(4), B(4), VAI_UM(3), O(4), VAI_UM(4));
+    S5: COMP_ADD port map(A(5), B(5), VAI_UM(4), O(5), VAI_UM(5));
+    S6: COMP_ADD port map(A(6), B(6), VAI_UM(5), O(6), VAI_UM(6));
+    S7: COMP_ADD port map(A(7), B(7), VAI_UM(6), O(7), VAI_UM(7));
+    S8: COMP_ADD port map(A(8), B(8), VAI_UM(7), O(8), VAI_UM(8));
+    S9: COMP_ADD port map(A(9), B(9), VAI_UM(8), O(9), VAI_UM(9));
+    S10: COMP_ADD port map(A(10), B(10), VAI_UM(9), O(10), CO);
+
+end CKT;
+
+
+--===================--
+-- MULTIPLEXADOR 2x1 -- 
+--===================--
+
+entity MUX21 is
+    port(A, B, S: in bit;
+       O: out bit);
+ end MUX21;
+ 
+ architecture CKT of MUX21 is
+ 
+ begin
+
+     O <= (B and S) or (A and (not S));
+
+ end CKT;
+
+
+--===================--
+-- MULTIPLEXADOR 8x1 -- 
+--===================--
+
+entity MUX81 is
+    port(I0, I1, I2, I3, I4, I5, I6, I7, S0, S1, S2: in bit;
+       O: out bit);
+ end MUX81;
+ 
+ architecture CKT of MUX81 is
+ 
+ begin
+
+     O <= (I0 AND (NOT S2 AND NOT S1 AND NOT S0)) OR (I1 AND (NOT S2 AND NOT S1 AND S0))
+        OR (I2 AND (NOT S2 AND S1 AND NOT S0)) OR (I3 AND (NOT S2 AND S1 AND S0))
+        OR (I4 AND (S2 AND NOT S1 AND NOT S0)) OR (I5 AND (S2 AND NOT S1 AND S0))
+        OR (I6 AND (S2 AND S1 AND NOT S0)) OR (I7 AND (S2 AND S1 AND S0));
+ 
+end CKT;
+
+--===========================--
+-- MULTIPLEXADOR 8X1 11 BITS --
+--===========================--
+
+ENTITY MUX8X1_11INPUTS IS
+    PORT( I0, I1, I2, I3, I4, I5, I6, I7: IN BIT_VECTOR(10 DOWNTO 0);
+        SEL: IN BIT_VECTOR(2 DOWNTO 0 );
+        O: OUT BIT_VECTOR(10 DOWNTO 0));
+END MUX8X1_11INPUTS;
+
+ARCHITECTURE CKT OF MUX8X1_11INPUTS IS
+
+COMPONENT MUX81 is
+    port(I0, I1, I2, I3, I4, I5, I6, I7, S0, S1, S2: in bit;
+       O: out bit);
+end COMPONENT;
+
+BEGIN
+
+    MUX1: MUX81 PORT MAP(I0(0),I1(0), I2(0), I3(0), I4(0), I5(0), I6(0), I7(0), SEL(0), SEL(1), SEL(2), O(0));
+    MUX2: MUX81 PORT MAP(I0(1),I1(1), I2(1), I3(1), I4(1), I5(1), I6(1), I7(1), SEL(0), SEL(1), SEL(2), O(1));
+    MUX3: MUX81 PORT MAP(I0(2),I1(2), I2(2), I3(2), I4(2), I5(2), I6(2), I7(2), SEL(0), SEL(1), SEL(2), O(2));
+    MUX4: MUX81 PORT MAP(I0(3),I1(3), I2(3), I3(3), I4(3), I5(3), I6(3), I7(3), SEL(0), SEL(1), SEL(2), O(3));
+    MUX5: MUX81 PORT MAP(I0(4),I1(4), I2(4), I3(4), I4(4), I5(4), I6(4), I7(4), SEL(0), SEL(1), SEL(2), O(4));
+    MUX6: MUX81 PORT MAP(I0(5),I1(5), I2(5), I3(5), I4(5), I5(5), I6(5), I7(5), SEL(0), SEL(1), SEL(2), O(5));
+    MUX7: MUX81 PORT MAP(I0(6),I1(6), I2(6), I3(6), I4(6), I5(6), I6(6), I7(6), SEL(0), SEL(1), SEL(2), O(6));
+    MUX8: MUX81 PORT MAP(I0(7),I1(7), I2(7), I3(7), I4(7), I5(7), I6(7), I7(7), SEL(0), SEL(1), SEL(2), O(7));
+    MUX9: MUX81 PORT MAP(I0(8),I1(8), I2(8), I3(8), I4(8), I5(8), I6(8), I7(8), SEL(0), SEL(1), SEL(2), O(8));
+    MUX10:MUX81 PORT MAP(I0(9),I1(9), I2(9), I3(9), I4(9), I5(9), I6(9), I7(9), SEL(0), SEL(1), SEL(2), O(9));
+    MUX11:MUX81 PORT MAP(I0(10), I1(10), I2(10), I3(10), I4(10), I5(10), I6(10), I7(10), SEL(0), SEL(1), SEL(2), O(10));
+
+END CKT;
+
+
+--============--
+-- FlipFlop JK --
+--============--
+
+ENTITY ffjk IS
+port (clk ,J,K,P,C: IN BIT;
+q: OUT BIT );
+END ffjk ;
+
+ARCHITECTURE ckt OF ffjk IS
+
+SIGNAL qS: BIT;
+
+BEGIN
+
+PROCESS (clk ,P,C)
+BEGIN
+IF P = '0' THEN qS <= '1';
+ELSIF C = '0' THEN qS <= '0';
+ELSIF clk ='1' AND clk ' EVENT THEN
+IF J = '1' AND K = '1' THEN qS <= NOT qS;
+ELSIF J = '1' AND K = '0' THEN qS <= '1';
+ELSIF J = '0' AND K = '1' THEN qS <= '0';
+END IF;
+END IF;
+END PROCESS ;
+q <= qS;
+
+END ckt;
+
+--============--
+-- FlipFlop D --
+--============--
+
+ENTITY ffd IS
+	port ( clk ,D ,P , C : IN BIT ;
+		q : OUT BIT );
+END ffd ;
+
+ARCHITECTURE ckt OF ffd IS
+	SIGNAL qS : BIT;
+BEGIN
+    PROCESS ( clk ,P ,C )
+	    BEGIN
+	    IF P = '0' THEN qS <= '1';
+	    ELSIF C = '0' THEN qS <= '0';
+	    ELSIF clk = '1' AND clk ' EVENT THEN
+	    qS <= D ;
+	    END IF;
+    END PROCESS ;
+q <= qS ;
+END ckt ;
+
+
+--===============================--
+-- COMPARADOR DE MAGNITUDE 1 BIT --
+--===============================--
+
+entity COMP_BIT is
+    port(A, B, maior,igual, menor: in bit;
+              AgtB, AeqB, AltB: out bit);
+end COMP_BIT;
+  
+ARCHITECTURE CKT OF COMP_BIT IS
+    
+BEGIN
+
+    AgtB <= (((not B) and A) and igual) or maior;
+    AeqB <= ((A xnor B) and igual);
+    AltB <= (((not A) and B) and igual) or menor;
+    
+END CKT;
+
+
+--=================================-- 
+-- COMPARADOR DE MAGNITUDE 11 BITS --
+--=================================--
+
+entity COMP11 is
+    port(A,B: in bit_vector(10 downto 0);
+              AgtB, AeqB, AltB: out bit);
+end COMP11;
+  
+ARCHITECTURE CKT OF COMP11 IS
+    
+component COMP_BIT is
+     port(A, B, maior,igual, menor: in bit;
+              AgtB, AeqB, AltB: out bit);
+end component;
+  
+signal GT, EQ, LT: bit_vector(10 downto 0);
+  
+begin
+  
+      COMP1: COMP_BIT port map(A(10), B(10),'0', '1','0', GT(10), EQ(10), LT(10));
+      COMP2: COMP_BIT port map(A(9), B(9), GT(10), EQ(10), LT(10), GT(9), EQ(9), LT(9));
+      COMP3: COMP_BIT port map(A(8), B(8), GT(9), EQ(9), LT(9), GT(8), EQ(8), LT(8));
+      COMP4: COMP_BIT port map(A(7), B(7), GT(8), EQ(8), LT(8), GT(7), EQ(7), LT(7));
+      COMP5: COMP_BIT port map(A(6), B(6), GT(7), EQ(7), LT(7), GT(6), EQ(6), LT(6));
+      COMP6: COMP_BIT port map(A(5), B(5), GT(6), EQ(6), LT(6), GT(5), EQ(5), LT(5));
+      COMP7: COMP_BIT port map(A(4), B(4), GT(5), EQ(5), LT(5), GT(4), EQ(4), LT(4));
+      COMP8: COMP_BIT port map(A(3), B(3), GT(4), EQ(4), LT(4), GT(3), EQ(3), LT(3));
+      COMP9: COMP_BIT port map(A(2), B(2), GT(3), EQ(3), LT(3), GT(2), EQ(2), LT(2));
+      COMP10: COMP_BIT port map(A(1), B(1), GT(2), EQ(2), LT(2), GT(1), EQ(1), LT(1));
+      COMP11: COMP_BIT port map(A(0), B(0), GT(1), EQ(1), LT(1), GT(0), EQ(0), LT(0));
+      
+      AgtB <= GT(0);
+      AeqB <= EQ(0);
+      AltB <= LT(0);
+  
+end CKT;
+
+
+--======================--
+--  REGISTRADOR 11 BITS --
+--======================--
+
+ENTITY REG11 IS
+    PORT( I: IN BIT_VECTOR(10 DOWNTO 0);
+        CLK, CLR, EN: IN BIT;
+        O: OUT BIT_VECTOR(10 DOWNTO 0));
+END REG11;
+
+ARCHITECTURE CKT OF REG11 IS
+
+COMPONENT ffd IS
+    port ( clk ,D ,P , C : IN BIT ;
+    q : OUT BIT );
+END COMPONENT;
+
+COMPONENT MUX21 is
+    port(A, B, S: in bit;
+       O: out bit);
+ end COMPONENT;
+
+SIGNAL CLEAR:BIT;
+SIGNAL Q,D: BIT_VECTOR(10 DOWNTO 0);
+
+BEGIN
+
+    CLEAR <= NOT CLR;
+
+    MUX1:  MUX21 PORT MAP(Q(0), I(0), EN, D(0));
+    MUX2:  MUX21 PORT MAP(Q(1), I(1), EN, D(1));
+    MUX3:  MUX21 PORT MAP(Q(2), I(2), EN, D(2));
+    MUX4:  MUX21 PORT MAP(Q(3), I(3), EN, D(3));
+    MUX5:  MUX21 PORT MAP(Q(4), I(4), EN, D(4));
+    MUX6:  MUX21 PORT MAP(Q(5), I(5), EN, D(5));
+    MUX7:  MUX21 PORT MAP(Q(6), I(6), EN, D(6));
+    MUX8:  MUX21 PORT MAP(Q(7), I(7), EN, D(7));
+    MUX9:  MUX21 PORT MAP(Q(8), I(8), EN, D(8));
+    MUX10: MUX21 PORT MAP(Q(9), I(9), EN, D(9));
+    MUX11: MUX21 PORT MAP(Q(10), I(10), EN, D(10));
+
+
+    FFD1: ffd PORT MAP (CLK, D(0), '1', CLEAR, Q(0));
+    FFD2: ffd PORT MAP (CLK, D(1), '1', CLEAR, Q(1));
+    FFD3: ffd PORT MAP (CLK, D(2), '1', CLEAR, Q(2));
+    FFD4: ffd PORT MAP (CLK, D(3), '1', CLEAR, Q(3));
+    FFD5: ffd PORT MAP (CLK, D(4), '1', CLEAR, Q(4));
+    FFD6: ffd PORT MAP (CLK, D(5), '1', CLEAR, Q(5));
+    FFD7: ffd PORT MAP (CLK, D(6), '1', CLEAR, Q(6));
+    FFD8: ffd PORT MAP (CLK, D(7), '1', CLEAR, Q(7));
+    FFD9: ffd PORT MAP (CLK, D(8), '1', CLEAR, Q(8));
+    FFD10: ffd PORT MAP (CLK, D(9), '1', CLEAR, Q(9));
+    FFD11: ffd PORT MAP (CLK, D(10), '1', CLEAR, Q(10));
+
+
+    O<= Q;
+
+END CKT;
+
+
+--======================--
+-- SOMADOR + COMPARADOR --
+--======================--
+
+ENTITY SOMACOMP IS
+    PORT(A, B, C: IN BIT_VECTOR(10 DOWNTO 0);
+        MAIOR, IGUAL, MENOR: OUT BIT);
+END SOMACOMP;
+
+ARCHITECTURE CKT OF SOMACOMP IS
+
+COMPONENT ADD11 is
+    port(A, B: in bit_vector(10 downto 0);
+            O: out bit_vector(10 downto 0);
+            CO: out bit);
+end COMPONENT;
+
+COMPONENT COMP11 IS
+    PORT(A,B: in bit_vector(10 downto 0);
+        AgtB, AeqB, AltB: out bit);
+END COMPONENT;
+
+SIGNAL RES: BIT_VECTOR(10 DOWNTO 0);
+SIGNAL CO: BIT;
+
+BEGIN
+
+ADICAO: ADD11 PORT MAP (A,B, RES,CO);
+COMPARACAO: COMP11 PORT MAP(RES, C, MAIOR, IGUAL, MENOR);
+
+END CKT;
+
+
+--=======================--
+-- SOMADOR + REGISTRADOR --
+--=======================--
+
+ENTITY SOMAREG IS
+    PORT(B: IN BIT_VECTOR(10 DOWNTO 0);
+        CLK, CLR, EN: IN BIT;
+        AC: OUT BIT_VECTOR(10 DOWNTO 0));
+END SOMAREG;
+
+ARCHITECTURE CKT OF SOMAREG IS
+
+COMPONENT ADD11 is
+    port(A, B: in bit_vector(10 downto 0);
+            O: out bit_vector(10 downto 0);
+            CO: out bit);
+end COMPONENT;
+
+COMPONENT REG11 IS
+    PORT( I: IN BIT_VECTOR(10 DOWNTO 0);
+        CLK, CLR, EN: IN BIT;
+        O: OUT BIT_VECTOR(10 DOWNTO 0));
+END COMPONENT;
+
+SIGNAL RELOAD, RES: BIT_VECTOR(10 DOWNTO 0);
+SIGNAL CO: BIT;
+
+BEGIN
+
+ADICAO: ADD11 PORT MAP (RELOAD, B, RES, CO);
+REGISTRA: REG11 PORT MAP (RES, CLK, CLR, EN, RELOAD);
+AC <= RELOAD(10 DOWNTO 0);
+
+END CKT;
+
+
+--===========--
+-- CONDIÇÕES --
+--===========--
+
+ENTITY CONDICOES IS
+    port(SOMA100, SOMA50, SOMA25, SOMA10, SOMA5, SOMA1, TC100, TC50, TC25, TC10, TC5, TC1: IN BIT;
+        CONDICAO0, CONDICAO1, CONDICAO2, CONDICAO3, CONDICAO4, CONDICAO5, CONDICAO6, COND0, COND1, COND2: OUT BIT);
+END CONDICOES;
+
+ARCHITECTURE CKT OF CONDICOES IS
+
+SIGNAL CONDIC0,CONDIC1,CONDIC2,CONDIC3,CONDIC4,CONDIC5,CONDIC6: BIT;
+
+BEGIN
+
+CONDIC0 <= NOT SOMA100 AND TC100;
+CONDIC1 <= (SOMA100 OR NOT TC100) AND (NOT SOMA50 AND TC50);
+CONDIC2 <= (SOMA100 OR NOT TC100) AND (SOMA50 OR NOT TC50) AND (NOT SOMA25 AND TC25);
+CONDIC3 <= (SOMA100 OR NOT TC100) AND (SOMA50 OR NOT TC50) AND (SOMA25 OR NOT TC25) AND (NOT SOMA10 AND TC10);
+CONDIC4 <= (SOMA100 OR NOT TC100) AND (SOMA50 OR NOT TC50) AND (SOMA25 OR NOT TC25) AND (SOMA10 OR NOT TC10) AND (NOT SOMA5 AND TC5);
+CONDIC5 <= (SOMA100 OR NOT TC100) AND (SOMA50 OR NOT TC50) AND (SOMA25 OR NOT TC25) AND (SOMA10 OR NOT TC10) AND (SOMA5 OR NOT TC5) AND (NOT SOMA1 AND TC1);
+CONDIC6 <= (SOMA100 OR NOT TC100) AND (SOMA50 OR NOT TC50) AND (SOMA25 OR NOT TC25) AND (SOMA10 OR NOT TC10) AND (SOMA5 OR NOT TC5) AND (SOMA1 OR NOT TC1);
+
+CONDICAO0 <= CONDIC0 ; 
+CONDICAO1 <= CONDIC1 ;
+CONDICAO2 <= CONDIC2 ;
+CONDICAO3 <= CONDIC3 ;
+CONDICAO4 <= CONDIC4 ;
+CONDICAO5 <= CONDIC5 ;
+CONDICAO6 <= CONDIC6 ;
+
+COND0 <= CONDIC1 OR CONDIC3 OR CONDIC5;
+COND1 <= CONDIC2 OR CONDIC3 OR CONDIC6;
+COND2 <= CONDIC4 OR CONDIC5 OR CONDIC6;
+
+END CKT;
+
+
+--===================--
+-- BLOCO OPERACIONAL -- 
+--===================--
+
+ENTITY OP_BLOCK IS
+    PORT(VALOR: IN BIT_VECTOR(10 DOWNTO 0);
+        BANCO: IN BIT_VECTOR(5 DOWNTO 0);
+        CLK, CLRT, CLRAC, LDT, PISCA: IN BIT;
+        LIBERA100,LIBERA50,LIBERA25,LIBERA10,LIBERA5,LIBERA1: OUT BIT_VECTOR(10 DOWNTO 0);
+        TV, TT, NTT, L: OUT BIT);
+END OP_BLOCK;
+
+ARCHITECTURE CKT OF OP_BLOCK IS
+
+COMPONENT MUX21 is
+    port(A, B, S: in bit;
+       O: out bit);
+end COMPONENT;
+
+COMPONENT MUX8X1_11INPUTS IS
+    PORT( I0, I1, I2, I3, I4, I5, I6, I7: IN BIT_VECTOR(10 DOWNTO 0);
+        SEL: IN BIT_VECTOR(2 DOWNTO 0 );
+        O: OUT BIT_VECTOR(10 DOWNTO 0));
+END COMPONENT;
+
+COMPONENT ffjk IS
+port (clk ,J,K,P,C: IN BIT;
+q: OUT BIT );
+END COMPONENT ;
+
+COMPONENT REG11 IS
+    PORT( I: IN BIT_VECTOR(10 DOWNTO 0);
+        CLK, CLR, EN: IN BIT;
+        O: OUT BIT_VECTOR(10 DOWNTO 0));
+END COMPONENT;
+
+COMPONENT COMP11 is
+    port(A,B: in bit_vector(10 downto 0);
+              AgtB, AeqB, AltB: out bit);
+end COMPONENT;
+
+COMPONENT SOMACOMP IS
+    PORT(A, B, C: IN BIT_VECTOR(10 DOWNTO 0);
+        MAIOR, IGUAL, MENOR: OUT BIT);
+END COMPONENT;
+
+COMPONENT SOMAREG IS
+    PORT(B: IN BIT_VECTOR(10 DOWNTO 0);
+        CLK, CLR, EN: IN BIT;
+        AC: OUT BIT_VECTOR(10 DOWNTO 0));
+END COMPONENT;
+
+COMPONENT CONDICOES IS
+    port(SOMA100, SOMA50, SOMA25, SOMA10, SOMA5, SOMA1, TC100, TC50, TC25, TC10, TC5, TC1: IN BIT;
+        CONDICAO0, CONDICAO1, CONDICAO2, CONDICAO3, CONDICAO4, CONDICAO5, CONDICAO6, COND0, COND1, COND2: OUT BIT);
+END COMPONENT;
+
+
+SIGNAL V11BITS, INCREMENTADOR, MUXS, C100, C50, C25, C10, C5, C1, ZERO, ONE: BIT_VECTOR(10 DOWNTO 0);
+SIGNAL SELCOND: BIT_VECTOR (2 DOWNTO 0);
+SIGNAL SOMA100, SOMA50, SOMA25, SOMA10, SOMA5, SOMA1, TC100, TC50, TC25, TC10, TC5, TC1: BIT;
+SIGNAL CONDICAO0, CONDICAO1, CONDICAO2, CONDICAO3, CONDICAO4, CONDICAO5, CONDICAO6, COND0, COND1, COND2: BIT;
+SIGNAL MAIOR, IGUAL, MENOR: BIT_VECTOR(5 DOWNTO 0);
+SIGNAL MAIOR2, MENOR2: BIT_VECTOR (1 DOWNTO 0);
+SIGNAL STT,QLED:BIT;
+
+BEGIN
+
+C100 <= "00001100100";
+C50 <=  "00000110010";
+C25 <=  "00000011001";
+C10 <=  "00000001010";
+C5 <=   "00000000101";
+C1 <=   "00000000001";
+ZERO <= "00000000000";
+ONE <=  "00000000001";
+
+SELCOND(2) <= COND2; 
+SELCOND(1) <= COND1;
+SELCOND(0) <= COND0;
+
+TC100 <= BANCO(5);
+TC50  <= BANCO(4);
+TC25  <= BANCO(3);
+TC10  <= BANCO(2);
+TC5   <= BANCO(1);
+TC1   <= BANCO(0);
+
+REGVAL: REG11 PORT MAP(VALOR, CLK, CLRT, LDT, V11BITS);
+MUX81: MUX8X1_11INPUTS PORT MAP(C100, C50, C25, C10, C5, C1, ZERO, ZERO, SELCOND, MUXS);
+INCREMENT: SOMAREG PORT MAP(MUXS, CLK, CLRAC, '1', INCREMENTADOR);
+ADDCOMP1: SOMACOMP PORT MAP(INCREMENTADOR, C100,V11BITS, SOMA100, IGUAL(5), MENOR(5));
+ADDCOMP2: SOMACOMP PORT MAP(INCREMENTADOR, C50, V11BITS,  SOMA50, IGUAL(4), MENOR(4));
+ADDCOMP3: SOMACOMP PORT MAP(INCREMENTADOR, C25, V11BITS,  SOMA25, IGUAL(3), MENOR(3));
+ADDCOMP4: SOMACOMP PORT MAP(INCREMENTADOR, C10, V11BITS,  SOMA10, IGUAL(2), MENOR(2));
+ADDCOMP5: SOMACOMP PORT MAP(INCREMENTADOR, C5, V11BITS,   SOMA5 , IGUAL(1), MENOR(1));
+ADDCOMP6: SOMACOMP PORT MAP(INCREMENTADOR, C1, V11BITS,   SOMA1 , IGUAL(0), MENOR(0));
+COND: CONDICOES PORT MAP(SOMA100, SOMA50, SOMA25, SOMA10, SOMA5, SOMA1, TC100, TC50, TC25, TC10, TC5, TC1, CONDICAO0, CONDICAO1, CONDICAO2, CONDICAO3, CONDICAO4, CONDICAO5, CONDICAO6, COND0, COND1, COND2);
+COMPARACAO1: COMP11 PORT MAP(ZERO, V11BITS, MAIOR2(1), TV, MENOR2(1) );
+COMPARACAO2: COMP11 PORT MAP(INCREMENTADOR, V11BITS, MAIOR2(0), STT, MENOR2(0));
+
+NTT <= (NOT COND0 AND COND1 AND COND2) AND (NOT STT);
+TT <= STT;
+
+ACUMULADOR1: SOMAREG PORT MAP (ONE, CLK, CLRAC, CONDICAO0, LIBERA100);
+ACUMULADOR2: SOMAREG PORT MAP (ONE, CLK, CLRAC, CONDICAO1, LIBERA50);
+ACUMULADOR3: SOMAREG PORT MAP (ONE, CLK, CLRAC, CONDICAO2, LIBERA25);
+ACUMULADOR4: SOMAREG PORT MAP (ONE, CLK, CLRAC, CONDICAO3, LIBERA10);
+ACUMULADOR5: SOMAREG PORT MAP (ONE, CLK, CLRAC, CONDICAO4, LIBERA5);
+ACUMULADOR6: SOMAREG PORT MAP (ONE, CLK, CLRAC, CONDICAO5, LIBERA1);
+
+FFLED: ffjk PORT MAP(CLK, PISCA, PISCA, '1', '1', QLED);
+MUXLED: MUX21 PORT MAP('1', QLED, PISCA, L);
+
+END CKT;
+
+
+--===============================--
+-- LÓGICA COMBINACIONAL BOTÃO BS --
+--===============================--
+
+ENTITY LOGIC_BS IS 
+    PORT(Q1, Q0, T: IN BIT;
+        D1, D0, PRESS: OUT BIT);
+END LOGIC_BS;
+
+ARCHITECTURE CKT OF LOGIC_BS IS
+
+BEGIN
+
+D1 <= (NOT Q1 AND Q0) OR (Q1 AND NOT Q0 AND T);
+D0 <= NOT Q1 AND NOT Q0 AND T;
+PRESS <= NOT Q1 AND Q0;
+
+END CKT;
+
+
+--==========--
+-- BOTÃO BS --
+--==========--
+
+ENTITY BS IS
+    PORT(CLK, T: IN BIT;
+        PRESS: OUT BIT);
+END BS;
+
+ARCHITECTURE CKT OF BS IS
+
+COMPONENT ffd is
+    PORT ( clk ,D ,P , C : IN BIT ;
+		q : OUT BIT );
+END COMPONENT;
+
+COMPONENT LOGIC_BS IS 
+    PORT(Q1, Q0, T: IN BIT;
+        D1, D0, PRESS: OUT BIT);
+END COMPONENT;
+
+SIGNAL Q1,Q0,D1,D0:BIT;
+
+BEGIN
+
+LOGIC: LOGIC_BS PORT MAP (Q1, Q0, T, D1, D0, PRESS);
+FFD1: ffd PORT MAP(CLK, D1, '1', '1', Q1);
+FFD2: ffd PORT MAP(CLK, D0, '1', '1', Q0);
+
+END CKT;
+
+
+--========================================--
+-- LOGICA COMBINACIONAL BLOCO DE CONTROLE --
+--========================================--
+
+ENTITY LOGIC_COMB IS
+    PORT(Q2,Q1,Q0, PRESS, TV, TT, NTT: IN BIT;
+        D2, D1, D0, CLRT, CLRAC, LDT, PIS: OUT BIT);
+END LOGIC_COMB;
+
+ARCHITECTURE CKT OF LOGIC_COMB IS
+
+BEGIN 
+
+D2 <= NOT Q2 AND Q1 AND NOT Q0 AND TT AND NOT NTT;
+D1 <= (NOT Q2 AND NOT Q1 AND Q0) OR (NOT Q2 AND Q1 AND NOT Q0 AND NOT TT);
+D0 <= (NOT Q2 AND NOT Q1 AND NOT Q0 AND PRESS AND TV) OR (NOT Q2 AND Q1 AND NOT Q0 AND NOT TT AND NTT);
+CLRT <= (NOT Q2 AND Q1 AND Q0) OR (Q2 AND NOT Q1 AND NOT Q0);
+CLRAC <= (NOT Q2 AND Q0);
+LDT <= (NOT Q2 AND NOT Q1 AND Q0);
+PIS <= (NOT Q2 AND NOT Q1 AND Q0) OR (NOT Q2 AND Q1 AND NOT Q0 AND NOT TT) OR (NOT Q2 AND Q1 AND NOT Q0 AND NOT NTT);
+
+END CKT;
+
+
+--===================--
+-- BLOCO DE CONTROLE --
+--===================--
+
+ENTITY CONTROL_BLOCK IS 
+    PORT(CLK, T, TV, TT, NTT: IN BIT;
+	 CLRT, CLRAC, LDT, PISCA: OUT BIT);
+END CONTROL_BLOCK;
+
+ARCHITECTURE CKT OF CONTROL_BLOCK IS
+
+COMPONENT ffd IS
+    port ( clk ,D ,P , C : IN BIT ;
+    q : OUT BIT );
+END COMPONENT;
+
+COMPONENT LOGIC_COMB IS
+    PORT(Q2,Q1,Q0, PRESS, TV, TT, NTT: IN BIT;
+        D2, D1, D0, CLRT, CLRAC, LDT, PIS: OUT BIT);
+END COMPONENT;
+
+COMPONENT BS IS
+    PORT(CLK, T: IN BIT;
+        PRESS: OUT BIT);
+END COMPONENT;
+
+
+SIGNAL Q2,Q1,Q0,D2,D1,D0,PRESS: BIT;
+
+BEGIN
+
+BOTTON: BS PORT MAP(CLK, T, PRESS);
+LOGIC: LOGIC_COMB PORT MAP (Q2, Q1, Q0, PRESS, TV, TT, NTT, D2, D1, D0, CLRT, CLRAC, LDT, PISCA);
+FFD1: ffd PORT MAP(CLK, D2, '1', '1', Q2);
+FFD2: ffd PORT MAP(CLK, D1, '1', '1', Q1);
+FFD3: ffd PORT MAP(CLK, D0, '1', '1', Q0);
+
+END CKT;
+
+
+--==================--
+-- MÁQUINA DE TROCO --
+--==================--
+
+ENTITY maqtroco IS
+	PORT(VALOR:IN BIT_VECTOR(10 DOWNTO 0);
+	BANCO: IN BIT_VECTOR(5 DOWNTO 0);
+    CLK, T: IN BIT;
+    C100, C50, C25, C10, C5, C1: OUT BIT_VECTOR(10 DOWNTO 0);
+    L: OUT BIT);
+END maqtroco;
+
+ARCHITECTURE CKT OF maqtroco IS
+
+COMPONENT CONTROL_BLOCK IS 
+    PORT(CLK, T, TV, TT, NTT: IN BIT;
+	 CLRT, CLRAC, LDT, PISCA: OUT BIT);
+END COMPONENT;
+
+COMPONENT OP_BLOCK IS
+    PORT(VALOR: IN BIT_VECTOR(10 DOWNTO 0);
+        BANCO: IN BIT_VECTOR(5 DOWNTO 0);
+        CLK, CLRT, CLRAC, LDT, PISCA: IN BIT;
+        LIBERA100,LIBERA50,LIBERA25,LIBERA10,LIBERA5,LIBERA1: OUT BIT_VECTOR(10 DOWNTO 0);
+        TV, TT, NTT, L: OUT BIT);
+END COMPONENT;
+
+SIGNAL CLRT, CLRAC, LDT, PISCA, TV, TT, NTT: BIT;
+
+BEGIN
+
+CBLOCK: CONTROL_BLOCK PORT MAP(CLK, T, TV, TT, NTT, CLRT, CLRAC, LDT, PISCA);
+OBLOCK: OP_BLOCK PORT MAP(VALOR, BANCO, CLK, CLRT, CLRAC, LDT, PISCA, C100, C50, C25, C10, C5, C1, TV, TT, NTT, L);
+
+END CKT;
